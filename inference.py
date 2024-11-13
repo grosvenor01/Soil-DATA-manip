@@ -21,8 +21,7 @@ if processing_method == "Visualisation (Complex)":
     st.subheader("Choose the plotting method ")
     plot_type = st.selectbox("plot_type", ["Scatter","HeatMap" ,"Histogramme"])
     if plot_type == "Histogramme":
-       attribute = st.selectbox("attribute", df.columns) 
-       visualize_complex(dataset_name , "Histogramme" , attribute = attribute)
+       visualize_complex(dataset_name , "Histogramme" )
     else: 
         visualize_complex(dataset_name , plot_type)
 

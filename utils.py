@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np 
+import seaborn as sns 
 import matplotlib.pyplot as plt 
 import streamlit as st
 import plotly.graph_objects as go
@@ -61,32 +62,42 @@ def visualize(df_name):
     return df , fully_report
 
 def plot_scatter(df , atr1 , atr2):
-    fig = plt.figure(figsize=(6,6))
+    fig = plt.figure(figsize=(4,4))
     plt.scatter(df[atr1], df[atr2], c=df[atr2], cmap='viridis', s=50, alpha=0.7)
     plt.xlabel(atr1)
     plt.ylabel(atr2)
     plt.title(f"Scatter Plot of {atr1} vs {atr2}")
     return fig
 
-def plot_hitogramme(df , column):
+def plot_histogramme(df , column):
     fig = plt.figure(figsize = (6,6))
+    plt.hist(df[column], bins=10, edgecolor='black', linewidth=1.2)
     plt.xlabel(column)
     plt.title(f"Histogramme visualization pour l'atr : {column}")
-    plt.hist(df[column], bins=10, edgecolor='black', linewidth=1.2)
     return fig
     
+def plot_heatmap(df):
+    df_new = df.copy()
+    for i in df_new.columns:
+        if df[i].dtype not in ["float64" , "int64"]:
+            df_new = df_new.drop(columns=[i])
+    fig = plt.figure(figsize=(4,4))
+    sns.heatmap(df_new.corr())
+    return fig
 def visualize_complex(df_name, display_method , atr=None):
     df, _ = visualize(df_name) 
     figs = []
+    columns = df.columns
     if display_method == "Scatter":
-        columns = df.columns
         for i in range(1, len(columns) - 1, 2):
             figs.append(plot_scatter(df, columns[i], columns[i + 1]))
 
     elif display_method == "Histogramme":
-        attribute = st.selectbox("attribute", df.columns) 
-        plot_hitogramme(df,columns[attribute])
-
+        attribute = st.selectbox("attribute", columns) 
+        st.pyplot(plot_histogramme(df,attribute))
+    
+    else :
+        st.pyplot(plot_heatmap(df))
     num_figs = len(figs)
     cols = st.columns(3)  
     fig_index = 0
