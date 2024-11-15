@@ -14,8 +14,9 @@ if processing_method == "Visualisation (Simple)":
     st.dataframe(df)
     st.markdown("### 2. Description : ")
     st.write(f"{description}")
-    st.markdown("### 3. Sneek Peak into the Areas")
-    plot_polygons_on_map(df["geometry"])
+    if dataset_name == "Soil Dataset":
+        st.markdown("### 3. Sneek Peak into the Areas")
+        plot_polygons_on_map(df["geometry"])
 
 if processing_method == "Visualisation (Complex)":
     st.subheader("Choose the plotting method ")
@@ -23,7 +24,7 @@ if processing_method == "Visualisation (Complex)":
     if plot_type == "Histogramme":
        visualize_complex(dataset_name , "Histogramme" )
     else: 
-        visualize_complex(dataset_name , plot_type)
+       visualize_complex(dataset_name , plot_type)
 
 if processing_method == "Update Operation":
     pass

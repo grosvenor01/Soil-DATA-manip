@@ -48,19 +48,6 @@ def plot_polygons_on_map(wkt_polygons):
     )
     st.plotly_chart(fig)
 
-def visualize(df_name):
-    if df_name == "Soil Dataset":
-        df = pd.read_excel("soil_dz_allprops.xlsx")
-        fully_report = """This Algerian soil dataset comprises chemical analyses of topsoil and subsoil samples from various locations, spatially referenced by polygon geometries. The data includes percentages of 13 components for each layer: sand, silt, clay, pH (water), organic carbon (OC), nitrogen (N), base saturation (BS), cation exchange capacity (CEC), clay CEC, calcium carbonate (CaCO3), bulk density (BD), and the C/N ratio. each and the dataset provide the % of each one in top soil and sub soil in diffrent areas"""
-    elif df_name == "Climat Dataset":
-        df = pd.read_csv("finals.csv")
-        fully_report = """This dataset contains hourly meteorological data for Algeria during 2019, encompassing surface pressure, rainfall, snowfall, air temperature, specific humidity, and wind speed/vector. Visual analysis reveals negligible snowfall throughout the year. The average accumulated values for air temperature, wind speed, and surface pressure across the four seasons """
-    elif df_name =="Integrated Dataset":
-        pass # we pass for now 
-    else :
-        return -1  # Error Case
-    return df , fully_report
-
 def plot_scatter(df , atr1 , atr2):
     fig = plt.figure(figsize=(4,4))
     plt.scatter(df[atr1], df[atr2], c=df[atr2], cmap='viridis', s=50, alpha=0.7)
@@ -84,20 +71,45 @@ def plot_heatmap(df):
     fig = plt.figure(figsize=(4,4))
     sns.heatmap(df_new.corr())
     return fig
+
+def visualize(df_name):
+    if df_name == "Soil Dataset":
+        df = pd.read_excel("soil_dz_allprops.xlsx")
+        fully_report = """This Algerian soil dataset comprises chemical analyses of topsoil and subsoil samples from various locations, spatially referenced by polygon geometries. The data includes percentages of 13 components for each layer: sand, silt, clay, pH (water), organic carbon (OC), nitrogen (N), base saturation (BS), cation exchange capacity (CEC), clay CEC, calcium carbonate (CaCO3), bulk density (BD), and the C/N ratio. each and the dataset provide the % of each one in top soil and sub soil in diffrent areas"""
+    elif df_name == "Climat Dataset":
+        df = pd.read_csv("finals.csv")
+        fully_report = """This dataset contains hourly meteorological data for Algeria during 2019, encompassing surface pressure, rainfall, snowfall, air temperature, specific humidity, and wind speed/vector. Visual analysis reveals negligible snowfall throughout the year. The average accumulated values for air temperature, wind speed, and surface pressure across the four seasons """
+    elif df_name =="Integrated Dataset":
+        pass # we pass for now 
+    else :
+        return -1  # Error Case
+    return df , fully_report
+
 def visualize_complex(df_name, display_method , atr=None):
     df, _ = visualize(df_name) 
     figs = []
     columns = df.columns
     if display_method == "Scatter":
-        for i in range(1, len(columns) - 1, 2):
-            figs.append(plot_scatter(df, columns[i], columns[i + 1]))
+        attribute1 = st.selectbox("attribute1", columns)
+        attribute2 = st.selectbox("attribute2", columns)
+        percentage = st.selectbox("attribute2", ["25%" , "50%" , "75%" , "100%"])
+
+        if percentage == "100%":
+            figs.append(plot_scatter(df, attribute1, attribute2))
+        else :
+            percentage = 25 if percentage == "25%" else (50 if percentage == "50%"  else 75)
+            size_data = percentage * len(df) // 100
+            new_df = df.sample(n=size_data , random_state=42)
+            figs.append(plot_scatter(new_df, attribute1, attribute2))
 
     elif display_method == "Histogramme":
         attribute = st.selectbox("attribute", columns) 
-        st.pyplot(plot_histogramme(df,attribute))
+        if attribute :
+            st.pyplot(plot_histogramme(df,attribute))
     
     else :
         st.pyplot(plot_heatmap(df))
+    
     num_figs = len(figs)
     cols = st.columns(3)  
     fig_index = 0
