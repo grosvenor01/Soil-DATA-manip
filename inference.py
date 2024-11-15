@@ -6,7 +6,7 @@ st.subheader("Choose the dataset")
 dataset_name = st.selectbox("dataset", ["Soil Dataset","Climat Dataset" , "Integrated dataset"])
 
 st.subheader("Choose your operation")
-processing_method = st.selectbox("operation", ["","Visualisation (Simple)","Visualisation (Complex)"  , "Update Operation" , "Delete Operation" , "Generale information" ,"Reduction","Discretization","Integration","Otliers Operations"])
+processing_method = st.selectbox("operation", ["","Visualisation (Simple)","Visualisation (Complex)"  , "Update Operation" , "Delete Operation" , "Generale information" ,"Reduction","Discretization","Integration","Normalization" ,"Otliers Operations"])
 
 if dataset_name:
     df , description = visualize(dataset_name)
@@ -40,6 +40,16 @@ if processing_method == "Delete Operation":
 
 if processing_method == "Generale information":
     generale_informations(df)
+
+if processing_method == "Normalization":
+    st.subheader("Choose the Method you wanna use please!")
+    method = st.selectbox("Method" , ["","MinMax" , "Z-Score"])
+    if method == "MinMax":
+        df = MinMax_Normalization(df)
+        st.dataframe(df)
+    elif method=="Z-Score" :
+        df = ZScore_Normalization(df)
+        st.dataframe(df)
 
 if processing_method == "Reduction":
     pass

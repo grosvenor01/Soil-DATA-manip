@@ -176,3 +176,22 @@ def generale_informations(df):
             st.write(f"**Standred deviation:** {std_value}")
             st.write(f"**Quart1:** {quartiles[0]}\n **Quart2:** {quartiles[1]}\n **Quart3:** {quartiles[2]}\n **Quart4:** {quartiles[3]}\n **Quart5:** {quartiles[4]}")
             st.write(f"**Quartile Deviation:** {quartile_deviation}")
+
+def MinMax_Normalization(df):
+    df_minmax = pd.DataFrame()
+    for column in df.columns:
+        if df[column].dtype == 'float64' and column not in ["lat","lon"]:
+            bas = min(df[column])
+            haut = max(df[column])
+            gap = haut - bas
+            df_minmax[column] = (df[column] - bas)/gap
+    return df_minmax
+
+def ZScore_Normalization(df):
+    df_zscore = pd.DataFrame()
+    for column in df.columns:
+        if df[column].dtype == 'float64' and column not in ["lat","lon"]:
+            mean_value = df[column].mean()
+            std_value = df[column].std()
+            df_zscore[column] = ((df[column]) - mean_value)/std_value
+    return df_zscore
