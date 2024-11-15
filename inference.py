@@ -39,7 +39,7 @@ if processing_method == "Delete Operation":
     st.dataframe(df)
 
 if processing_method == "Generale information":
-    pass
+    generale_informations(df)
 
 if processing_method == "Reduction":
     pass

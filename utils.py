@@ -149,3 +149,30 @@ def delete_operation(df):
         except ValueError:
             st.error("Invalid index. Please enter an integer.")
     return df
+
+def generale_informations(df):
+    columns = st.multiselect("Select columns to delete", df.columns)
+    for i in columns:
+        mean_value = df[i].mean()
+        median_value = df[i].median()
+        mode_value = df[i].mode()
+        min_value = df[i].min()
+        max_value = df[i].max()
+        # Range of values
+        range_value = max_value - min_value
+        variance_value = df[i].var()
+        std_value = df[i].std()
+        quartiles = [df[i].quantile(0),df[i].quantile(0.25), df[i].median(),df[i].quantile(0.75), df[i].quantile(1)]
+        quartile_deviation = df[i].quantile(0.75) - df[i].quantile(0.25)
+        with st.expander(f"Information for {i}"):
+            st.write(f"**Data Type:** {df[i].dtype}")
+            st.write(f"**Mean Value:** {mean_value}")
+            st.write(f"**Median Value:** {median_value}")
+            st.write(f"**Mode Value:** {mode_value}")
+            st.write(f"**Unique Values:** {df[i].unique()}")
+            st.write(f"**Missing Values:** {df[i].isnull().sum()}")
+            st.write(f"**Range Values:** {range_value}")
+            st.write(f"**Variance:** {variance_value}")
+            st.write(f"**Standred deviation:** {std_value}")
+            st.write(f"**Quart1:** {quartiles[0]}\n **Quart2:** {quartiles[1]}\n **Quart3:** {quartiles[2]}\n **Quart4:** {quartiles[3]}\n **Quart5:** {quartiles[4]}")
+            st.write(f"**Quartile Deviation:** {quartile_deviation}")
