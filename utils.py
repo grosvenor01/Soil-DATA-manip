@@ -262,3 +262,43 @@ def discritize(df):
             print(f"\nQuantile distribution for column '{column}':")
             print(df_disc[column].value_counts())
             return df_disc
+
+def define_outliers(df_ , column , method):
+    if method=="IQR":
+        Q1 = df_[column].quantile(0.25)
+        Q3 = df_[column].quantile(0.75)
+        IQR = Q3-Q1
+        lower_bound =  Q1 - (1.5 * IQR)
+        upper_bound =  Q3 + (1.5 * IQR)
+        return lower_bound , upper_bound
+    else :
+        pass
+
+def handling_outliers(df, percentage=None, transformation_type=None):
+    handling_method = st.selectbox("Handling method", ["transform", "trim", "delete"]) 
+
+    if handling_method == "trim":
+        percentage = st.number_input("Enter a percentage to trim from each side (0-100)", 0, 100, key="trim_percentage")
+        if percentage > 0:
+            percentage = percentage / 100
+
+    if handling_method:
+        cols_to_handle = [col for col in df.columns if col not in ["lon", "lat", "time", "geometry", "Season", "CNT_FULLNAME"]]
+        for col in cols_to_handle:
+            try:
+                if handling_method == "transform":
+                    transformation_type = st.selectbox("Transformation type", ["log", "None"])
+                    if transformation_type == "log":
+                        df[col] = np.log10(df[col] + 1e-9) #Avoid log(0) error
+                elif handling_method == "trim":
+                    if percentage:
+                        num_to_remove = int(len(df) * percentage / 2)
+                        df_sorted = df.sort_values(by=col)
+                        df = df_sorted[num_to_remove:-num_to_remove] 
+                elif handling_method == "delete":
+                    lower, upper = define_outliers(df, col, "IQR")
+                    df = df[(df[col] >= lower) & (df[col] <= upper)]
+            except Exception as e:
+                continue
+
+        return df

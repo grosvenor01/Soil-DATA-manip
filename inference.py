@@ -85,4 +85,5 @@ if processing_method == "Integration":
     pass
 
 if processing_method == "Otliers Operations":
-    pass
+    df = handling_outliers(df)
+    st.dataframe(df)
