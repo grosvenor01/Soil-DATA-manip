@@ -85,18 +85,18 @@ def visualize(df_name):
         return -1  # Error Case
     return df , fully_report
 
-def visualize_complex(df_name, display_method , atr=None):
-    df, _ = visualize(df_name) 
+def visualize_complex(df, display_method):
     figs = []
     columns = df.columns
     if display_method == "Scatter":
         attribute1 = st.selectbox("attribute1", columns)
         attribute2 = st.selectbox("attribute2", columns)
-        percentage = st.selectbox("attribute2", ["25%" , "50%" , "75%" , "100%"])
+        percentage = st.selectbox("percentage", ["25%" , "50%" , "75%" , "100%"])
 
         if percentage == "100%":
             figs.append(plot_scatter(df, attribute1, attribute2))
-        else :
+
+        elif percentage:
             percentage = 25 if percentage == "25%" else (50 if percentage == "50%"  else 75)
             size_data = percentage * len(df) // 100
             new_df = df.sample(n=size_data , random_state=42)
@@ -118,5 +118,34 @@ def visualize_complex(df_name, display_method , atr=None):
             st.pyplot(figs[i])
         fig_index += 1
     
+def update_operation(df):
+    attribute = st.selectbox("attribute to modify", df.columns)
+    index =  st.number_input("index" , 0 , len(df)-1 )
+    new_value = st.text_input("new")
+    try : 
+        if df[attribute].dtype == "float64":
+            new_value = float(new_value)
+            df.loc[index , attribute] = new_value
+            return df
+        else :
+            pass
+    except Exception as e:
+        st.error("Error occured or type mismatch"+str(e))
 
-    
+def delete_operation(df):
+    attribute = st.selectbox("Type of delete", ["Column", "Index"])
+    if attribute == "Column":
+        columns_to_delete = st.multiselect("Select columns to delete", df.columns)
+        if columns_to_delete:
+            df = df.drop(columns=columns_to_delete)
+    elif attribute == "Index":
+        index_str = st.text_input("Enter index to delete")
+        try:
+            index = int(index_str)
+            if 0 <= index < len(df):
+                df = df.drop(index, axis=0)
+            else:
+                st.error("Index out of bounds")
+        except ValueError:
+            st.error("Invalid index. Please enter an integer.")
+    return df

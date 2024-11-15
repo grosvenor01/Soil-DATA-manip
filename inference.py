@@ -8,8 +8,10 @@ dataset_name = st.selectbox("dataset", ["Soil Dataset","Climat Dataset" , "Integ
 st.subheader("Choose your operation")
 processing_method = st.selectbox("operation", ["","Visualisation (Simple)","Visualisation (Complex)"  , "Update Operation" , "Delete Operation" , "Generale information" ,"Reduction","Discretization","Integration","Otliers Operations"])
 
-if processing_method == "Visualisation (Simple)":
+if dataset_name:
     df , description = visualize(dataset_name)
+
+if processing_method == "Visualisation (Simple)":    
     st.markdown(f"### 1. DataFrame of {dataset_name} : ")
     st.dataframe(df)
     st.markdown("### 2. Description : ")
@@ -22,15 +24,19 @@ if processing_method == "Visualisation (Complex)":
     st.subheader("Choose the plotting method ")
     plot_type = st.selectbox("plot_type", ["Scatter","HeatMap" ,"Histogramme"])
     if plot_type == "Histogramme":
-       visualize_complex(dataset_name , "Histogramme" )
+       visualize_complex(df , "Histogramme" )
     else: 
-       visualize_complex(dataset_name , plot_type)
+       visualize_complex(df , plot_type)
 
 if processing_method == "Update Operation":
-    pass
+    st.subheader("Choose the attribute you wanna update")
+    df = update_operation(df)
+    st.dataframe(df)
 
 if processing_method == "Delete Operation":
-    pass
+    st.subheader("Choose the attribute you wanna Delete")
+    df = delete_operation(df)
+    st.dataframe(df)
 
 if processing_method == "Generale information":
     pass
