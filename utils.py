@@ -72,6 +72,17 @@ def plot_heatmap(df):
     sns.heatmap(df_new.corr())
     return fig
 
+def get_season(date):
+    month = int(date.split("-")[1])
+    if 3 <= month <= 5:
+        return 'Spring'
+    elif 6 <= month <= 8:
+        return 'Summer'
+    elif 9 <= month <= 11:
+        return 'Autumn'
+    else:
+        return 'Winter'
+
 def visualize(df_name):
     if df_name == "Soil Dataset":
         df = pd.read_excel("soil_dz_allprops.xlsx")
@@ -195,3 +206,20 @@ def ZScore_Normalization(df):
             std_value = df[column].std()
             df_zscore[column] = ((df[column]) - mean_value)/std_value
     return df_zscore
+
+def reduction_horiz(df):
+    df_temp = df.drop_duplicates()
+    dropped = len(df) - len(df_temp)
+    print(f"Number of dropped values {dropped}")
+    return df_temp
+
+def data_reduction(df):
+    df_copy = df.copy()
+    df_copy['Season'] = df_copy['time'].apply(get_season)
+    df_copy = df_copy.drop(columns=['time'])
+    aggregation_dict ={}
+    for i in df_copy.columns :
+        if i !="Season" and i!="lat" and i!="lon" :
+            aggregation_dict[i]= "mean"
+    df_copy = df_copy.groupby(['Season', 'lat', 'lon']).agg(aggregation_dict).reset_index()
+    return df_copy

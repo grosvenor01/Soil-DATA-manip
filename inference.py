@@ -11,7 +11,8 @@ processing_method = st.selectbox("operation", ["","Visualisation (Simple)","Visu
 if dataset_name:
     df , description = visualize(dataset_name)
 
-if processing_method == "Visualisation (Simple)":    
+if processing_method == "Visualisation (Simple)": 
+    print(len(df))   
     st.markdown(f"### 1. DataFrame of {dataset_name} : ")
     st.dataframe(df)
     st.markdown("### 2. Description : ")
@@ -52,7 +53,21 @@ if processing_method == "Normalization":
         st.dataframe(df)
 
 if processing_method == "Reduction":
-    pass
+    st.subheader("Choose the Method you wanna use please!")
+    method = st.selectbox("Method" , ["","Vertical" , "Horizental" , "Seasons"])
+    if method == "Vertical":
+        df = delete_operation(df)
+        st.dataframe(df)
+    elif method=="Horizental" :
+        df = reduction_horiz(df)
+        st.dataframe(df)
+    elif method =="Seasons":
+        if dataset_name != "Climat Dataset":
+            st.error("This reduction method is not allowed for this dataset")
+        else : 
+            df = data_reduction(df )
+            st.dataframe(df)
+
 
 if processing_method == "Discretization":
     pass
