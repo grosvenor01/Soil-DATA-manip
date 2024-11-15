@@ -4,6 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt 
 import streamlit as st
 import plotly.graph_objects as go
+import math
 import re
 from shapely.wkt import loads
 
@@ -223,3 +224,41 @@ def data_reduction(df):
             aggregation_dict[i]= "mean"
     df_copy = df_copy.groupby(['Season', 'lat', 'lon']).agg(aggregation_dict).reset_index()
     return df_copy
+
+def Amplitude(df):
+    column = st.selectbox("Type of delete", df.columns)
+    if column : 
+        try : 
+            intervals = []
+            k = int(1 + (10/3) * math.log10(len(df)))
+            max_val = max(df[column])
+            min_val = min(df[column])
+
+            width = (max_val - min_val) / k
+            for i in range(k+1):
+                intervals.append(min_val)
+                min_val+=width
+            df[column]  = pd.cut(df[column] , intervals )
+            return df
+        except Exception as e: 
+            st.error("non numerical values detected")
+
+#Equal Frequance
+def discritize(df):
+    Q = 5
+    column = st.selectbox("Type of delete", df.columns)
+    df_disc = pd.DataFrame()
+    if column : 
+        if df[column].dtype in ['float64', 'int64']:
+            intervals = []
+            sorted_data = sorted(df[column])
+            N = len(sorted_data)
+            for i in range(1, Q+1):
+                position = int(N * i / Q) 
+                intervals.append(sorted_data[min(position, N - 1)]) 
+            intervals = set(intervals)
+            interv = sorted(set(intervals))
+            df_disc[column] = pd.cut(df[column], bins=interv)
+            print(f"\nQuantile distribution for column '{column}':")
+            print(df_disc[column].value_counts())
+            return df_disc

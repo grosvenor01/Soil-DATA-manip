@@ -58,9 +58,11 @@ if processing_method == "Reduction":
     if method == "Vertical":
         df = delete_operation(df)
         st.dataframe(df)
+
     elif method=="Horizental" :
         df = reduction_horiz(df)
         st.dataframe(df)
+
     elif method =="Seasons":
         if dataset_name != "Climat Dataset":
             st.error("This reduction method is not allowed for this dataset")
@@ -70,7 +72,14 @@ if processing_method == "Reduction":
 
 
 if processing_method == "Discretization":
-    pass
+    st.subheader("Choose the Method you wanna use please!")
+    method = st.selectbox("Method" , ["","Amplitude" , "Equal-Frequancy"])
+    if method == "Amplitude":
+        df = Amplitude(df)
+        st.dataframe(df)
+    elif method == "Equal-Frequancy":
+        df = discritize(df)
+        st.dataframe(df)
 
 if processing_method == "Integration":
     pass
