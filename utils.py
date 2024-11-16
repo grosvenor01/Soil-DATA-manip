@@ -8,6 +8,10 @@ import math
 import re
 from shapely.wkt import loads
 
+def save_dataset(df):
+    df.to_csv("last_df.csv" , index=False)
+    st.write("new dataset saved")
+
 def plot_polygons_on_map(wkt_polygons):
     fig = go.Figure()
     all_coords = []
@@ -94,6 +98,9 @@ def visualize(df_name):
     elif df_name =="Integrated Dataset":
         df = pd.read_csv("integrated.csv")
         fully_report = """Integrated dataframe between the soil and the climat data for each point defined with a LAT and LON the mean value of PSURF , Wind , Qair , Tair , Snowf , Rainf  ,Sand % topsoil , .... etc """
+    elif df_name =="last dataset":
+        df = pd.read_csv("last_df.csv")
+        return df , None
     else :
         return -1  # Error Case
     return df , fully_report
