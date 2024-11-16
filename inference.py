@@ -3,7 +3,7 @@ from utils import *
 
 st.title("Complete Soil & Climat dataset Processing")
 st.subheader("Choose the dataset")
-dataset_name = st.selectbox("dataset", ["Soil Dataset","Climat Dataset" , "Integrated dataset"])
+dataset_name = st.selectbox("dataset", ["Soil Dataset","Climat Dataset" , "Integrated Dataset"])
 
 st.subheader("Choose your operation")
 processing_method = st.selectbox("operation", ["","Visualisation (Simple)","Visualisation (Complex)"  , "Update Operation" , "Delete Operation" , "Generale information" ,"Reduction","Discretization","Integration","Normalization" ,"Otliers Operations"])
@@ -11,8 +11,7 @@ processing_method = st.selectbox("operation", ["","Visualisation (Simple)","Visu
 if dataset_name:
     df , description = visualize(dataset_name)
 
-if processing_method == "Visualisation (Simple)": 
-    print(len(df))   
+if processing_method == "Visualisation (Simple)":  
     st.markdown(f"### 1. DataFrame of {dataset_name} : ")
     st.dataframe(df)
     st.markdown("### 2. Description : ")
@@ -70,7 +69,6 @@ if processing_method == "Reduction":
             df = data_reduction(df )
             st.dataframe(df)
 
-
 if processing_method == "Discretization":
     st.subheader("Choose the Method you wanna use please!")
     method = st.selectbox("Method" , ["","Amplitude" , "Equal-Frequancy"])
@@ -82,7 +80,8 @@ if processing_method == "Discretization":
         st.dataframe(df)
 
 if processing_method == "Integration":
-    pass
+    df = integration()
+    st.dataframe(df)
 
 if processing_method == "Otliers Operations":
     df = handling_outliers(df)

@@ -92,7 +92,8 @@ def visualize(df_name):
         df = pd.read_csv("finals.csv")
         fully_report = """This dataset contains hourly meteorological data for Algeria during 2019, encompassing surface pressure, rainfall, snowfall, air temperature, specific humidity, and wind speed/vector. Visual analysis reveals negligible snowfall throughout the year. The average accumulated values for air temperature, wind speed, and surface pressure across the four seasons """
     elif df_name =="Integrated Dataset":
-        pass # we pass for now 
+        df = pd.read_csv("integrated.csv")
+        fully_report = """Integrated dataframe between the soil and the climat data for each point defined with a LAT and LON the mean value of PSURF , Wind , Qair , Tair , Snowf , Rainf  ,Sand % topsoil , .... etc """
     else :
         return -1  # Error Case
     return df , fully_report
@@ -243,7 +244,6 @@ def Amplitude(df):
         except Exception as e: 
             st.error("non numerical values detected")
 
-#Equal Frequance
 def discritize(df):
     Q = 5
     column = st.selectbox("Type of delete", df.columns)
@@ -302,3 +302,9 @@ def handling_outliers(df, percentage=None, transformation_type=None):
                 continue
 
         return df
+
+def integration():
+    df = pd.read_csv("integrated.csv")
+    df = df.dropna()
+    df = df.drop(columns=["Unnamed: 0"])
+    return df 
